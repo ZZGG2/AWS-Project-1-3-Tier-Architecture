@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # 1. 시스템 업데이트 및 Nginx 설치
-# Amazon Linux 2 또는 2023 환경에서 Nginx를 안정적으로 설치합니다.
 sudo yum update -y
 sudo amazon-linux-extras install nginx1 -y || sudo yum install nginx -y
 
@@ -10,12 +9,10 @@ sudo systemctl start nginx
 sudo systemctl enable nginx
 
 # 3. IMDSv2(Instance Metadata Service)를 사용하여 가용 영역(AZ) 정보 추출
-# 보안이 강화된 토큰 기반 방식으로 현재 서버가 위치한 AZ(2a 또는 2c)를 가져옵니다.
 TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
 AZ=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/placement/availability-zone)
 
 # 4. 테스트용 웹 페이지 생성 (Project #1 전용 레이아웃)
-# ALB 부하 분산과 고가용성 테스트 시 브라우저에서 직관적으로 확인할 수 있도록 구성했습니다.
 cat <<EOF | sudo tee /usr/share/nginx/html/index.html
 <!DOCTYPE html>
 <html>
